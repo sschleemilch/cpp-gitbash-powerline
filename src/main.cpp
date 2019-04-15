@@ -2,8 +2,13 @@
 //
 
 #include <iostream>
+extern "C" {    
+    #include "git2.h"
+}
 
 int main() {
+    git_repository *repo = NULL;
+    int error = git_repository_open(&repo, "/tmp/…");
     std::cout << "Hello World!\n";
 }
 
