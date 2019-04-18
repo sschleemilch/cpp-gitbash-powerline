@@ -1,12 +1,12 @@
 #include "help_functions.hpp"
 #include <sstream>
-
+#include <iostream>
 std::string getCWDString(std::string cwd, std::string home) {
     std::string pathString = cwd;
-    
+
     size_t start_pos = cwd.find(home);
     if(start_pos != std::string::npos) {
-        pathString.replace(start_pos, cwd.length(), pathString);
+        pathString.replace(start_pos, home.length(), "~");
     }
 
     std::vector<std::string> pathSplit = split(pathString, '/');
@@ -29,7 +29,7 @@ std::string getCWDString(std::string cwd, std::string home) {
         }
     }
 
-    return pathString;
+    return " " + pathString;
 }
 
 std::vector<std::string> split(const std::string& s, char delimiter)

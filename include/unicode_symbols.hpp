@@ -23,7 +23,9 @@ public:
         ARROW_DOWN,
         MERGE,
         ARROW_RIGHT_2,
-        TRIANGLE_RIGHT
+        TRIANGLE_RIGHT,
+        QUADRANT_UPPER_LEFT,
+        QUADRANT_LOWER_RIGHT
     };
     static std::string getString(SYMBOL);
 };
