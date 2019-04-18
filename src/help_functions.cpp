@@ -29,7 +29,7 @@ std::string getCWDString(std::string cwd, std::string home) {
         }
     }
 
-    return " " + pathString;
+    return " " + pathString + " ";
 }
 
 std::vector<std::string> split(const std::string& s, char delimiter)

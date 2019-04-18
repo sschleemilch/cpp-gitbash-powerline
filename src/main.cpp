@@ -1,13 +1,15 @@
 #include <iostream>
 #include <algorithm>
 
-#include "git2.h"
+
 
 #include "bash_color.hpp"
 #include "unicode_symbols.hpp"
 #include "help_functions.hpp"
+#include "git_repo.hpp"
 
 void printPromptSymbol(int lastCommandReturnCode) {
+    std::cout << " ";
     if (lastCommandReturnCode == 0) {
         BashColor::print(UnicodeSymbols::getString(UnicodeSymbols::SYMBOL::TRIANGLE_RIGHT),
             BashColor::COLOR::PINK,
@@ -21,36 +23,24 @@ void printPromptSymbol(int lastCommandReturnCode) {
     }
 }
 
+
 int main(int argc, char** argv) {
     std::string cwd = std::getenv("PWD");
     std::string home = std::getenv("HOME");
     std::replace(home.begin(), home.end(), '\\', '/');
-    
-    git_libgit2_init();
-    int error;
-    bool isRepo = false;
-    git_buf root = {0};
-    error = git_repository_discover(&root, cwd.c_str(), 0, NULL);
 
-    git_repository *repo = NULL;
-    error = git_repository_open_ext(&repo, root.ptr, GIT_REPOSITORY_OPEN_NO_SEARCH, NULL);
-    git_buf_free(&root);
-    if (error == 0) {
-        isRepo = true;
-    }
+    GitRepo repo(cwd);
 
     BashColor::print(getCWDString(cwd, home),
         BashColor::COLOR::BLACK,
         BashColor::COLOR::BLUE,
         false);
-    BashColor::print(UnicodeSymbols::getString(UnicodeSymbols::SYMBOL::QUADRANT_UPPER_LEFT),
-        BashColor::COLOR::BLUE,
-        BashColor::COLOR::GREEN,
-        false);
-    BashColor::print(" BRANCH ",
-        BashColor::COLOR::BLACK,
-        BashColor::COLOR::GREEN,
-        false);
-    std::cout << " ";
+
+    if (repo.isRepo) {
+        BashColor::print(" git ",
+            BashColor::COLOR::BLACK,
+            BashColor::COLOR::GREEN,
+            false);
+    }
     printPromptSymbol(atoi(argv[1]));
 }
