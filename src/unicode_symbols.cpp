@@ -45,6 +45,8 @@ std::string UnicodeSymbols::getString(SYMBOL s) {
             return "\\u259B";
         case SYMBOL::QUADRANT_LOWER_RIGHT:
             return "\\u259F";
+        case SYMBOL::SQUARE:
+            return "\\u25AA";
     }
     return std::string();
 }

@@ -3,6 +3,8 @@
 
 GitRepo::GitRepo() {
     git_libgit2_init();
+    ahead = -1;
+    behind = -1;
 }
 GitRepo::~GitRepo() {}
 
@@ -27,7 +29,12 @@ void GitRepo::setHEADInfos() {
     git_reference_free(head);
     
     git_oid oid = {0};
-    error = git_reference_name_to_id(&oid, repo, branch.c_str());
+
+    std::string refBranchName = branch;
+    if (refBranchName != "HEAD") {
+        refBranchName = "refs/heads/" + refBranchName;
+    }
+    error = git_reference_name_to_id(&oid, repo, refBranchName.c_str());
 
     if (error == GIT_ENOTFOUND || error == GIT_EINVALIDSPEC) {
         commit_id = "UNKNOWN";
@@ -37,6 +44,27 @@ void GitRepo::setHEADInfos() {
     } else {
         commit_id = "UNKNOWN";
     }
+}
+
+void GitRepo::setRemoteInfos() {
+    if (headDetached) {
+        return;
+    }
+    git_oid localOid, originOid;
+    std::string localBranch = "refs/heads/" + branch;
+    std::string remoteBranch = "refs/remotes/origin/" + branch;
+    int error = git_reference_name_to_id(&localOid, repo, localBranch.c_str());
+    if (error == GIT_ENOTFOUND || error == GIT_EINVALIDSPEC) {
+        return;
+    }
+    error = git_reference_name_to_id(&originOid, repo, remoteBranch.c_str());
+    if (error == GIT_ENOTFOUND || error == GIT_EINVALIDSPEC) {
+        return;
+    }
+    size_t ahead, behind;
+    git_graph_ahead_behind(&ahead, &behind, repo, &localOid, &originOid);
+    this->ahead = int(ahead);
+    this->behind = int(behind);
 }
 
 void GitRepo::init(std::string cwd) {
