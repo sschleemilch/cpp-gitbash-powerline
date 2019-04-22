@@ -5,6 +5,17 @@ GitRepo::GitRepo() {
     git_libgit2_init();
     ahead = -1;
     behind = -1;
+    index_new = 0;
+    index_modified = 0;
+    index_deleted = 0;
+    index_renamed = 0;
+    index_typechanged = 0;
+
+    wt_new = 0;
+    wt_modified = 0;
+    wt_deleted = 0;
+    wt_renamed = 0;
+    wt_typechanged = 0;
 }
 GitRepo::~GitRepo() {}
 
@@ -65,6 +76,56 @@ void GitRepo::setRemoteInfos() {
     git_graph_ahead_behind(&ahead, &behind, repo, &localOid, &originOid);
     this->ahead = int(ahead);
     this->behind = int(behind);
+}
+
+void GitRepo::setStatusInfos() {
+    git_status_list *status;
+    git_status_options statusopt;
+    git_status_init_options(&statusopt, GIT_STATUS_OPTIONS_VERSION);
+    //statusopt.flags = GIT_STATUS_OPT_INCLUDE_UNTRACKED;
+    statusopt.flags = GIT_STATUS_OPT_EXCLUDE_SUBMODULES;
+    statusopt.flags |= GIT_STATUS_OPT_NO_REFRESH;
+
+    //GIT_STATUS_SHOW_INDEX_ONLY
+    //GIT_STATUS_SHOW_WORKDIR_ONLY
+    statusopt.show  = GIT_STATUS_SHOW_INDEX_AND_WORKDIR;
+
+    git_status_list_new(&status, repo, &statusopt);
+
+    size_t i, maxi = git_status_list_entrycount(status);
+    const git_status_entry *s;
+
+    for (i = 0; i < maxi; i++) {
+        s = git_status_byindex(status, i);
+        
+        if (s->status == GIT_STATUS_CURRENT)
+            continue;
+
+        // index status
+        if (s->status & GIT_STATUS_INDEX_NEW)
+            index_new++;
+        if (s->status & GIT_STATUS_INDEX_MODIFIED)
+            index_modified++;
+        if (s->status & GIT_STATUS_INDEX_DELETED)
+            index_deleted++;
+        if (s->status & GIT_STATUS_INDEX_RENAMED)
+            index_renamed++;
+        if (s->status & GIT_STATUS_INDEX_TYPECHANGE)
+            index_typechanged++;
+
+        // working tree status
+        if (s->status & GIT_STATUS_WT_MODIFIED)
+            wt_modified++;
+        if (s->status & GIT_STATUS_WT_DELETED)
+            wt_deleted++;
+        if (s->status & GIT_STATUS_WT_RENAMED)
+            wt_renamed++;
+        if (s->status & GIT_STATUS_WT_TYPECHANGE)
+            wt_typechanged++;
+        if (s->status == GIT_STATUS_WT_NEW)
+            wt_new++;
+    }
+    git_status_list_free(status);
 }
 
 void GitRepo::init(std::string cwd) {

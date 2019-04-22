@@ -86,6 +86,39 @@ void printRemoteInfos(GitRepo& repo) {
     }
 }
 
+void printStatusInfos(GitRepo& repo){
+    int index_changes = repo.index_new;
+    index_changes += repo.index_modified;
+    index_changes += repo.index_deleted;
+    index_changes += repo.index_renamed;
+    index_changes += repo.index_typechanged;
+
+    int wt_changes = repo.wt_new;
+    wt_changes += repo.wt_modified;
+    wt_changes += repo.wt_deleted;
+    wt_changes += repo.wt_renamed;
+    wt_changes += repo.wt_typechanged;
+
+    std::string toPrint;
+
+    if (index_changes > 0) {
+        toPrint = " " + std::to_string(index_changes);
+        toPrint += UnicodeSymbols::getString(UnicodeSymbols::SYMBOL::FLAG) + " ";
+        BashColor::print(toPrint,
+            BashColor::COLOR::BLACK,
+            BashColor::COLOR::YELLOW,
+            false);
+    }
+    if (wt_changes > 0) {
+        toPrint = " " + std::to_string(wt_changes);
+        toPrint += UnicodeSymbols::getString(UnicodeSymbols::SYMBOL::PENCIL) + " ";
+        BashColor::print(toPrint,
+            BashColor::COLOR::BLACK,
+            BashColor::COLOR::ORANGE,
+            false);
+    }
+}
+
 int main(int argc, char** argv) {
     std::string cwd = std::getenv("PWD");
     std::string home = std::getenv("HOME");
@@ -104,6 +137,8 @@ int main(int argc, char** argv) {
         printHEADInfos(repo);
         repo.setRemoteInfos();
         printRemoteInfos(repo);
+        repo.setStatusInfos();
+        printStatusInfos(repo);
     }
     int lastCommandState = 0;
     try {
