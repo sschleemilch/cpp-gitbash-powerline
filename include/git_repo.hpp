@@ -17,17 +17,9 @@ public:
     int ahead;
     int behind;
 
-    int index_new;
-    int index_modified;
-    int index_deleted;
-    int index_renamed;
-    int index_typechanged;
+    int index_changes;
+    int wt_changes;
 
-    int wt_new;
-    int wt_modified;
-    int wt_deleted;
-    int wt_renamed;
-    int wt_typechanged;
 private:
     static bool init(git_repository*, std::string);
     git_repository* repo;

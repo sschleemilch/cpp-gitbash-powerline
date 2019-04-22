@@ -5,17 +5,8 @@ GitRepo::GitRepo() {
     git_libgit2_init();
     ahead = -1;
     behind = -1;
-    index_new = 0;
-    index_modified = 0;
-    index_deleted = 0;
-    index_renamed = 0;
-    index_typechanged = 0;
-
-    wt_new = 0;
-    wt_modified = 0;
-    wt_deleted = 0;
-    wt_renamed = 0;
-    wt_typechanged = 0;
+    index_changes = 0;
+    wt_changes = 0;
 }
 GitRepo::~GitRepo() {}
 
@@ -103,27 +94,27 @@ void GitRepo::setStatusInfos() {
 
         // index status
         if (s->status & GIT_STATUS_INDEX_NEW)
-            index_new++;
+            index_changes++;
         if (s->status & GIT_STATUS_INDEX_MODIFIED)
-            index_modified++;
+            index_changes++;
         if (s->status & GIT_STATUS_INDEX_DELETED)
-            index_deleted++;
+            index_changes++;
         if (s->status & GIT_STATUS_INDEX_RENAMED)
-            index_renamed++;
+            index_changes++;
         if (s->status & GIT_STATUS_INDEX_TYPECHANGE)
-            index_typechanged++;
+            index_changes++;
 
         // working tree status
         if (s->status & GIT_STATUS_WT_MODIFIED)
-            wt_modified++;
+            wt_changes++;
         if (s->status & GIT_STATUS_WT_DELETED)
-            wt_deleted++;
+            wt_changes++;
         if (s->status & GIT_STATUS_WT_RENAMED)
-            wt_renamed++;
+            wt_changes++;
         if (s->status & GIT_STATUS_WT_TYPECHANGE)
-            wt_typechanged++;
+            wt_changes++;
         if (s->status == GIT_STATUS_WT_NEW)
-            wt_new++;
+            wt_changes++;
     }
     git_status_list_free(status);
 }

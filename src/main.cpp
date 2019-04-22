@@ -33,11 +33,17 @@ void printHEADInfos(GitRepo& repo) {
             BashColor::COLOR::ORANGE,
             false);
     } else {
-        toPrint = " " + repo.branch + " ";
+        BashColor::COLOR bg_color = BashColor::COLOR::GREEN;
+        toPrint = " ";
+        if (repo.index_changes > 0 || repo.wt_changes > 0) {
+            bg_color = BashColor::COLOR::YELLOW;
+            toPrint += UnicodeSymbols::getString(UnicodeSymbols::SYMBOL::DELTA) + " ";
+        }
+        toPrint += repo.branch + " ";
         toPrint += "(" + repo.commit_id + ") ";
         BashColor::print(toPrint,
             BashColor::COLOR::BLACK,
-            BashColor::COLOR::GREEN,
+            bg_color,
             false);
     }
 }
@@ -87,30 +93,18 @@ void printRemoteInfos(GitRepo& repo) {
 }
 
 void printStatusInfos(GitRepo& repo){
-    int index_changes = repo.index_new;
-    index_changes += repo.index_modified;
-    index_changes += repo.index_deleted;
-    index_changes += repo.index_renamed;
-    index_changes += repo.index_typechanged;
-
-    int wt_changes = repo.wt_new;
-    wt_changes += repo.wt_modified;
-    wt_changes += repo.wt_deleted;
-    wt_changes += repo.wt_renamed;
-    wt_changes += repo.wt_typechanged;
-
     std::string toPrint;
 
-    if (index_changes > 0) {
-        toPrint = " " + std::to_string(index_changes);
+    if (repo.index_changes > 0) {
+        toPrint = " " + std::to_string(repo.index_changes);
         toPrint += UnicodeSymbols::getString(UnicodeSymbols::SYMBOL::FLAG) + " ";
         BashColor::print(toPrint,
             BashColor::COLOR::BLACK,
             BashColor::COLOR::YELLOW,
             false);
     }
-    if (wt_changes > 0) {
-        toPrint = " " + std::to_string(wt_changes);
+    if (repo.wt_changes > 0) {
+        toPrint = " " + std::to_string(repo.wt_changes);
         toPrint += UnicodeSymbols::getString(UnicodeSymbols::SYMBOL::PENCIL) + " ";
         BashColor::print(toPrint,
             BashColor::COLOR::BLACK,
@@ -134,10 +128,10 @@ int main(int argc, char** argv) {
 
     if (repo.isRepo) {
         repo.setHEADInfos();
-        printHEADInfos(repo);
         repo.setRemoteInfos();
-        printRemoteInfos(repo);
         repo.setStatusInfos();
+        printHEADInfos(repo);
+        printRemoteInfos(repo);
         printStatusInfos(repo);
     }
     int lastCommandState = 0;
