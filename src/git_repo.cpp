@@ -8,6 +8,7 @@ GitRepo::GitRepo() {
     index_changes = 0;
     wt_changes = 0;
     wt_added = 0;
+    repo_root = "";
 }
 GitRepo::~GitRepo() {}
 
@@ -128,6 +129,7 @@ void GitRepo::init(std::string cwd) {
         is_repo = false;
         return;
     }
+    repo_root = root.ptr;
     error = git_repository_open_ext(&repo, root.ptr, GIT_REPOSITORY_OPEN_NO_SEARCH, NULL);
     git_buf_free(&root);
     if (error == 0) {

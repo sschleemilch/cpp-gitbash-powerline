@@ -1,6 +1,5 @@
 #include <iostream>
 #include <algorithm>
-
 #include "bash_color.hpp"
 #include "unicode_symbols.hpp"
 #include "help_functions.hpp"
@@ -131,6 +130,11 @@ void print_status_infos(GitRepo& repo){
 }
 
 int main(int argc, char** argv) {
+    bool show_status = true;
+    std::string no_status_flag = "--no-status";
+    if (argc > 2 && !no_status_flag.compare(argv[2])) {
+        show_status = false;
+    }
     std::string cwd = std::getenv("PWD");
     std::string home = std::getenv("HOME");
     std::replace(home.begin(), home.end(), '\\', '/');
@@ -146,9 +150,13 @@ int main(int argc, char** argv) {
     if (repo.is_repo) {
         repo.set_head_infos();
         repo.set_remote_infos();
-        repo.set_status_infos();
+        if (show_status) {
+            repo.set_status_infos();
+        }
         print_head_infos(repo);
-        print_status_infos(repo);
+        if (show_status) {
+            print_status_infos(repo);
+        }
         print_remote_infos(repo);
     }
     int lastCommandState = 0;

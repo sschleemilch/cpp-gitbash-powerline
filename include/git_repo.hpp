@@ -21,6 +21,8 @@ public:
     int wt_changes;
     int wt_added;
 
+    std::string repo_root;
+
 private:
     static bool init(git_repository*, std::string);
     git_repository* repo;
