@@ -88,8 +88,18 @@ alias switch_status=gitbash_powerline_switch_status
 - install build-essentials: `sudo apt install build-essentials`
 - install cmake: `sudo apt install cmake`
 
+`mkdir build && cd build`
+`cmake ..`
+`cmake --build .`
 
 ### Windows
+
+- I did compile with msvc 16 which is shipped with Visual Studio 2019 Community Edition
+
+`mkdir build && cd build`
+`cmake ..`
+`cmake --build .`
+
 
 ## OpenSSL 1.1.1b
 https://github.com/openssl/openssl
