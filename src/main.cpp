@@ -15,14 +15,16 @@ void print_prompt_symbol(int last_command_return_code) {
             BashColor::COLOR::TRANSPARENT,
             false);
     } else {
-        BashColor::print(UnicodeSymbols::getString(UnicodeSymbols::SYMBOL::TRIANGLE_RIGHT),
+        std::string to_print = "(" + std::to_string(last_command_return_code) + ")";
+        to_print += UnicodeSymbols::getString(UnicodeSymbols::SYMBOL::TRIANGLE_RIGHT);
+        BashColor::print(to_print,
             BashColor::COLOR::RED,
             BashColor::COLOR::TRANSPARENT,
             false);
     }
 }
 
-void print_head_infos(GitRepo& repo) {
+void print_head_infos(GitRepo& repo, bool show_status) {
     std::string to_print;
     if (repo.head_detached) {
         to_print = " " + UnicodeSymbols::getString(UnicodeSymbols::SYMBOL::ANCHOR);
@@ -43,6 +45,10 @@ void print_head_infos(GitRepo& repo) {
     } else {
         BashColor::COLOR bg_color = BashColor::COLOR::GREEN;
         to_print = " ";
+        if (!show_status) {
+            bg_color = BashColor::COLOR::YELLOW;
+            to_print += UnicodeSymbols::getString(UnicodeSymbols::SYMBOL::DELTA) + "?" + " ";
+        }
         if (repo.index_changes > 0 || repo.wt_changes > 0 || repo.wt_added > 0) {
             bg_color = BashColor::COLOR::YELLOW;
             to_print += UnicodeSymbols::getString(UnicodeSymbols::SYMBOL::DELTA) + " ";
@@ -153,7 +159,7 @@ int main(int argc, char** argv) {
         if (show_status) {
             repo.set_status_infos();
         }
-        print_head_infos(repo);
+        print_head_infos(repo, show_status);
         if (show_status) {
             print_status_infos(repo);
         }
