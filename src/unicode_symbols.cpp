@@ -47,6 +47,10 @@ std::string UnicodeSymbols::getString(SYMBOL s) {
             return "\\u259F";
         case SYMBOL::SQUARE:
             return "\\u25AA";
+        case SYMBOL::BRANCH:
+            return "\\u2442";
+        case SYMBOL::RECYCLE:
+            return "\\u267A";
     }
     return std::string();
 }

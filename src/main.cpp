@@ -47,10 +47,11 @@ void print_head_infos(GitRepo& repo, bool show_status) {
         if (!show_status) {
             bg_color = BashColor::COLOR::YELLOW;
             to_print += UnicodeSymbols::getString(UnicodeSymbols::SYMBOL::DELTA) + "?" + " ";
-        }
-        if (repo.index_changes > 0 || repo.wt_changes > 0 || repo.wt_added > 0) {
+        } else if (repo.index_changes > 0 || repo.wt_changes > 0 || repo.wt_added > 0) {
             bg_color = BashColor::COLOR::YELLOW;
             to_print += UnicodeSymbols::getString(UnicodeSymbols::SYMBOL::DELTA) + " ";
+        } else {
+            to_print += UnicodeSymbols::getString(UnicodeSymbols::SYMBOL::SUN) + " ";
         }
         to_print += repo.branch + " ";
         to_print += "(" + repo.commit_id + ") ";
@@ -134,6 +135,18 @@ void print_status_infos(GitRepo& repo){
     }
 }
 
+void print_merge_info(GitRepo& repo) {
+    if (repo.in_merge) {
+        std::string to_print = " ";
+        to_print += UnicodeSymbols::getString(UnicodeSymbols::SYMBOL::RECYCLE);
+        to_print += " MERGE ";
+        BashColor::print(to_print,
+            BashColor::COLOR::BLACK,
+            BashColor::COLOR::PINK,
+            false);
+    }
+}
+
 int main(int argc, char** argv) {
     bool show_status = true;
     std::string no_status_flag = "--no-status";
@@ -163,6 +176,7 @@ int main(int argc, char** argv) {
             print_status_infos(repo);
         }
         print_remote_infos(repo);
+        print_merge_info(repo);
     }
     int lastCommandState = 0;
     try {

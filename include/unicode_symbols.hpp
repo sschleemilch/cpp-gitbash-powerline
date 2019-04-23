@@ -26,7 +26,9 @@ public:
         TRIANGLE_RIGHT,
         QUADRANT_UPPER_LEFT,
         QUADRANT_LOWER_RIGHT,
-        SQUARE
+        SQUARE,
+        BRANCH,
+        RECYCLE
     };
     static std::string getString(SYMBOL);
 };

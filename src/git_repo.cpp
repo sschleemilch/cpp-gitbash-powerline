@@ -1,5 +1,6 @@
 #include "git_repo.hpp"
 #include <iostream>
+#include <sys/stat.h>
 
 GitRepo::GitRepo() {
     git_libgit2_init();
@@ -9,6 +10,7 @@ GitRepo::GitRepo() {
     wt_changes = 0;
     wt_added = 0;
     repo_root = "";
+    in_merge = false;
 }
 GitRepo::~GitRepo() {}
 
@@ -47,6 +49,12 @@ void GitRepo::set_head_infos() {
         commit_id = git_oid_tostr(shortsha, 9, &oid);
     } else {
         commit_id = "UNKNOWN";
+    }
+
+    const std::string merge_head_file = repo_root + "MERGE_HEAD";
+    struct stat buffer;
+    if (stat (merge_head_file.c_str(), &buffer) == 0) {
+        in_merge = true;
     }
 }
 

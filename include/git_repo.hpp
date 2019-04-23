@@ -23,6 +23,8 @@ public:
 
     std::string repo_root;
 
+    bool in_merge;
+
 private:
     static bool init(git_repository*, std::string);
     git_repository* repo;

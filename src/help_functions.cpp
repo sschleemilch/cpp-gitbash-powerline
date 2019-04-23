@@ -1,6 +1,7 @@
 #include "help_functions.hpp"
 #include <sstream>
 #include <iostream>
+
 std::string get_cwd_string(std::string cwd, std::string home) {
     std::string pathString = cwd;
 
