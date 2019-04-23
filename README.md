@@ -13,7 +13,7 @@ Provides several information regarding the git repository currently navigated in
 For being able to use the binary as it is you do need to setup a font that supports the unicode characters
 being used. You can find the font I am using in `setup`.
 
-To activate the font, you will need to modify your `~/.minttyrc`. Here an example content with a color schema:
+In case of Windows, to activate the font, you will need to modify your `~/.minttyrc`. Here an example content with a color schema:
 
 ```
 BoldAsFont=no
@@ -43,6 +43,11 @@ Transparency=off
 OpaqueWhenFocused=no
 ```
 
+In case of Unix, you will have the best experience if you change your terminal color-shema to the same colors defined
+as the given colors in `.minttyrc`. I recommend playing around with the colors that in the end it just looks good (e.g. use gpick to find the right colors
+so that the prompt symbol has transparent background).
+
+
 ### .bashrc adaptions to call the executable
 
 We need to manuplate the `PS1` variable of our bash to call our executable and saving the result in a variable.
@@ -56,13 +61,13 @@ switch the status of files in the index and in the working tree dynamically and 
 ```bash
 GITBASH_POWERLINE_STATUS=
 function _update_ps1() {
-   PS1_CONTENT="$(<path-to-gitbash-exe>\\<binary> $? $GITBASH_POWERLINE_STATUS 2> /dev/null)"
+   PS1_CONTENT="$(<path-to-gitbash-binary> $? $GITBASH_POWERLINE_STATUS 2> /dev/null)"
    PS1="$(echo -e $PS1_CONTENT) "
 }
 
-if [ "$TERM" != "linux" ]; then
-   PROMPT_COMMAND="_update_ps1; $PROMPT_COMMAND"
-fi
+
+PROMPT_COMMAND="_update_ps1; $PROMPT_COMMAND"
+
 
 function gitbash_powerline_switch_status() {
     if [ "$GITBASH_POWERLINE_STATUS" = --no-status ] ; then
@@ -75,6 +80,16 @@ function gitbash_powerline_switch_status() {
 alias switch_status=gitbash_powerline_switch_status
 ```
 
+## Compiling
+
+### Linux (Ubuntu as example)
+
+- install openssl: `sudo apt install libssl-dev`
+- install build-essentials: `sudo apt install build-essentials`
+- install cmake: `sudo apt install cmake`
+
+
+### Windows
 
 ## OpenSSL 1.1.1b
 https://github.com/openssl/openssl

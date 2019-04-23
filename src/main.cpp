@@ -8,14 +8,13 @@
 #include "git2.h"
 
 void print_prompt_symbol(int last_command_return_code) {
-    std::cout << " ";
     if (last_command_return_code == 0) {
-        BashColor::print(UnicodeSymbols::getString(UnicodeSymbols::SYMBOL::TRIANGLE_RIGHT),
+        BashColor::print(" " + UnicodeSymbols::getString(UnicodeSymbols::SYMBOL::TRIANGLE_RIGHT),
             BashColor::COLOR::PINK,
             BashColor::COLOR::TRANSPARENT,
             false);
     } else {
-        std::string to_print = std::to_string(last_command_return_code);
+        std::string to_print = " " + std::to_string(last_command_return_code);
         to_print += UnicodeSymbols::getString(UnicodeSymbols::SYMBOL::TRIANGLE_RIGHT);
         BashColor::print(to_print,
             BashColor::COLOR::RED,

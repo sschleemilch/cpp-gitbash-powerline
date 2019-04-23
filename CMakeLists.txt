@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.14.2)
+cmake_minimum_required(VERSION 3.12.1)
 project (gitbash-powerline)
 
 set(CMAKE_VERBOSE_MAKEFILE ON)
@@ -24,4 +24,8 @@ link_directories(${CMAKE_BINARY_DIR})
 add_executable(gitbash-powerline ${SOURCES})
 add_dependencies(gitbash-powerline libgit2)
 
-target_link_libraries(gitbash-powerline git2 winhttp rpcrt4 crypt32)
+if(WIN32)
+	target_link_libraries(gitbash-powerline git2 winhttp rpcrt4 crypt32)
+else()
+	target_link_libraries(gitbash-powerline git2 pthread z ssl crypto)
+endif()
