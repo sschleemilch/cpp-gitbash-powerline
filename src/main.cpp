@@ -8,9 +8,9 @@
 
 #include "git2.h"
 
-void printPromptSymbol(int lastCommandReturnCode) {
+void print_prompt_symbol(int last_command_return_code) {
     std::cout << " ";
-    if (lastCommandReturnCode == 0) {
+    if (last_command_return_code == 0) {
         BashColor::print(UnicodeSymbols::getString(UnicodeSymbols::SYMBOL::TRIANGLE_RIGHT),
             BashColor::COLOR::PINK,
             BashColor::COLOR::TRANSPARENT,
@@ -23,49 +23,58 @@ void printPromptSymbol(int lastCommandReturnCode) {
     }
 }
 
-void printHEADInfos(GitRepo& repo) {
-    std::string toPrint;
-    if (repo.headDetached) {
-        toPrint = " " + UnicodeSymbols::getString(UnicodeSymbols::SYMBOL::ANCHOR);
-        toPrint += repo.commit_id + " ";
-        BashColor::print(toPrint,
+void print_head_infos(GitRepo& repo) {
+    std::string to_print;
+    if (repo.head_detached) {
+        to_print = " " + UnicodeSymbols::getString(UnicodeSymbols::SYMBOL::ANCHOR);
+        to_print += repo.commit_id + " ";
+        BashColor::print(to_print,
             BashColor::COLOR::BLACK,
             BashColor::COLOR::ORANGE,
             false);
+        if (repo.index_changes > 0 || repo.wt_changes > 0 || repo.wt_added > 0) {
+            to_print = " " + UnicodeSymbols::getString(UnicodeSymbols::SYMBOL::LIGHTNING);
+            to_print += " DANGER ";
+            to_print += UnicodeSymbols::getString(UnicodeSymbols::SYMBOL::LIGHTNING) + " ";
+            BashColor::print(to_print,
+                BashColor::COLOR::BLACK,
+                BashColor::COLOR::RED,
+                true);
+        }
     } else {
         BashColor::COLOR bg_color = BashColor::COLOR::GREEN;
-        toPrint = " ";
-        if (repo.index_changes > 0 || repo.wt_changes > 0) {
+        to_print = " ";
+        if (repo.index_changes > 0 || repo.wt_changes > 0 || repo.wt_added > 0) {
             bg_color = BashColor::COLOR::YELLOW;
-            toPrint += UnicodeSymbols::getString(UnicodeSymbols::SYMBOL::DELTA) + " ";
+            to_print += UnicodeSymbols::getString(UnicodeSymbols::SYMBOL::DELTA) + " ";
         }
-        toPrint += repo.branch + " ";
-        toPrint += "(" + repo.commit_id + ") ";
-        BashColor::print(toPrint,
+        to_print += repo.branch + " ";
+        to_print += "(" + repo.commit_id + ") ";
+        BashColor::print(to_print,
             BashColor::COLOR::BLACK,
             bg_color,
             false);
     }
 }
 
-void printRemoteInfos(GitRepo& repo) {
-    std::string toPrint;
+void print_remote_infos(GitRepo& repo) {
+    std::string to_print;
     std::string arrows = UnicodeSymbols::getString(UnicodeSymbols::SYMBOL::ARROW_UP_DOWN);
     if (repo.ahead == -1 && repo.behind == -1) {
-        toPrint = " " + arrows + "? ";
-        BashColor::print(toPrint,
+        to_print = " " + arrows + "? ";
+        BashColor::print(to_print,
             BashColor::COLOR::RED,
             BashColor::COLOR::GREY_DARK,
             false);
     } else if (repo.ahead > 0 && repo.behind == 0){
-        toPrint = " " + UnicodeSymbols::getString(UnicodeSymbols::SYMBOL::ARROW_UP) + std::to_string(repo.ahead) + " ";
-        BashColor::print(toPrint,
+        to_print = " " + UnicodeSymbols::getString(UnicodeSymbols::SYMBOL::ARROW_UP) + std::to_string(repo.ahead) + " ";
+        BashColor::print(to_print,
             BashColor::COLOR::GREEN,
             BashColor::COLOR::GREY_DARK,
             false);
     } else if (repo.behind > 0 && repo.ahead == 0) {
-        toPrint = " " + UnicodeSymbols::getString(UnicodeSymbols::SYMBOL::ARROW_DOWN) + std::to_string(repo.behind) + " ";
-        BashColor::print(toPrint,
+        to_print = " " + UnicodeSymbols::getString(UnicodeSymbols::SYMBOL::ARROW_DOWN) + std::to_string(repo.behind) + " ";
+        BashColor::print(to_print,
             BashColor::COLOR::RED,
             BashColor::COLOR::GREY_DARK,
             false);
@@ -75,8 +84,8 @@ void printRemoteInfos(GitRepo& repo) {
             BashColor::COLOR::GREY_DARK,
             false);
     } else {
-        toPrint = " " + UnicodeSymbols::getString(UnicodeSymbols::SYMBOL::ARROW_UP) + std::to_string(repo.ahead);
-        BashColor::print(toPrint,
+        to_print = " " + UnicodeSymbols::getString(UnicodeSymbols::SYMBOL::ARROW_UP) + std::to_string(repo.ahead);
+        BashColor::print(to_print,
             BashColor::COLOR::GREEN,
             BashColor::COLOR::GREY_DARK,
             false);
@@ -84,31 +93,39 @@ void printRemoteInfos(GitRepo& repo) {
             BashColor::COLOR::YELLOW,
             BashColor::COLOR::GREY_DARK,
             false);
-        toPrint = std::to_string(repo.behind) + UnicodeSymbols::getString(UnicodeSymbols::SYMBOL::ARROW_DOWN) + " ";
-        BashColor::print(toPrint,
+        to_print = std::to_string(repo.behind) + UnicodeSymbols::getString(UnicodeSymbols::SYMBOL::ARROW_DOWN) + " ";
+        BashColor::print(to_print,
             BashColor::COLOR::RED,
             BashColor::COLOR::GREY_DARK,
             false);
     }
 }
 
-void printStatusInfos(GitRepo& repo){
-    std::string toPrint;
+void print_status_infos(GitRepo& repo){
+    std::string to_print;
 
     if (repo.index_changes > 0) {
-        toPrint = " " + std::to_string(repo.index_changes);
-        toPrint += UnicodeSymbols::getString(UnicodeSymbols::SYMBOL::FLAG) + " ";
-        BashColor::print(toPrint,
+        to_print = " " + std::to_string(repo.index_changes);
+        to_print += UnicodeSymbols::getString(UnicodeSymbols::SYMBOL::FLAG) + " ";
+        BashColor::print(to_print,
             BashColor::COLOR::BLACK,
-            BashColor::COLOR::YELLOW,
+            BashColor::COLOR::GREEN,
             false);
     }
     if (repo.wt_changes > 0) {
-        toPrint = " " + std::to_string(repo.wt_changes);
-        toPrint += UnicodeSymbols::getString(UnicodeSymbols::SYMBOL::PENCIL) + " ";
-        BashColor::print(toPrint,
+        to_print = " " + std::to_string(repo.wt_changes);
+        to_print += UnicodeSymbols::getString(UnicodeSymbols::SYMBOL::PENCIL) + " ";
+        BashColor::print(to_print,
             BashColor::COLOR::BLACK,
             BashColor::COLOR::ORANGE,
+            false);
+    }
+    if (repo.wt_added > 0) {
+        to_print = " " + std::to_string(repo.wt_added);
+        to_print += UnicodeSymbols::getString(UnicodeSymbols::SYMBOL::PLUS) + " ";
+        BashColor::print(to_print,
+            BashColor::COLOR::BLACK,
+            BashColor::COLOR::RED,
             false);
     }
 }
@@ -121,18 +138,18 @@ int main(int argc, char** argv) {
     GitRepo repo;
     repo.init(cwd);
 
-    BashColor::print(getCWDString(cwd, home),
+    BashColor::print(get_cwd_string(cwd, home),
         BashColor::COLOR::BLACK,
         BashColor::COLOR::BLUE,
         false);
 
-    if (repo.isRepo) {
-        repo.setHEADInfos();
-        repo.setRemoteInfos();
-        repo.setStatusInfos();
-        printHEADInfos(repo);
-        printRemoteInfos(repo);
-        printStatusInfos(repo);
+    if (repo.is_repo) {
+        repo.set_head_infos();
+        repo.set_remote_infos();
+        repo.set_status_infos();
+        print_head_infos(repo);
+        print_status_infos(repo);
+        print_remote_infos(repo);
     }
     int lastCommandState = 0;
     try {
@@ -140,5 +157,5 @@ int main(int argc, char** argv) {
     } catch (std::exception const & e) {
         // ignore
     }
-    printPromptSymbol(lastCommandState);
+    print_prompt_symbol(lastCommandState);
 }

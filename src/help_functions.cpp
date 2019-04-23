@@ -1,7 +1,7 @@
 #include "help_functions.hpp"
 #include <sstream>
 #include <iostream>
-std::string getCWDString(std::string cwd, std::string home) {
+std::string get_cwd_string(std::string cwd, std::string home) {
     std::string pathString = cwd;
 
     size_t start_pos = cwd.find(home);

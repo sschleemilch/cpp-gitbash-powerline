@@ -7,16 +7,17 @@ GitRepo::GitRepo() {
     behind = -1;
     index_changes = 0;
     wt_changes = 0;
+    wt_added = 0;
 }
 GitRepo::~GitRepo() {}
 
-void GitRepo::setHEADInfos() {
+void GitRepo::set_head_infos() {
     
     int detached = git_repository_head_detached(repo);
     if (detached == 1) {
-        headDetached = true;
+        head_detached = true;
     } else {
-        headDetached = false;
+        head_detached = false;
     }
 
     git_reference *head = NULL;
@@ -48,8 +49,8 @@ void GitRepo::setHEADInfos() {
     }
 }
 
-void GitRepo::setRemoteInfos() {
-    if (headDetached) {
+void GitRepo::set_remote_infos() {
+    if (head_detached) {
         return;
     }
     git_oid localOid, originOid;
@@ -69,12 +70,12 @@ void GitRepo::setRemoteInfos() {
     this->behind = int(behind);
 }
 
-void GitRepo::setStatusInfos() {
+void GitRepo::set_status_infos() {
     git_status_list *status;
     git_status_options statusopt;
     git_status_init_options(&statusopt, GIT_STATUS_OPTIONS_VERSION);
-    //statusopt.flags = GIT_STATUS_OPT_INCLUDE_UNTRACKED;
     statusopt.flags = GIT_STATUS_OPT_EXCLUDE_SUBMODULES;
+    statusopt.flags |= GIT_STATUS_OPT_INCLUDE_UNTRACKED;
     statusopt.flags |= GIT_STATUS_OPT_NO_REFRESH;
 
     //GIT_STATUS_SHOW_INDEX_ONLY
@@ -114,7 +115,7 @@ void GitRepo::setStatusInfos() {
         if (s->status & GIT_STATUS_WT_TYPECHANGE)
             wt_changes++;
         if (s->status == GIT_STATUS_WT_NEW)
-            wt_changes++;
+            wt_added++;
     }
     git_status_list_free(status);
 }
@@ -124,14 +125,14 @@ void GitRepo::init(std::string cwd) {
     git_buf root = {0};
     error = git_repository_discover(&root, cwd.c_str(), 0, NULL);
     if (error < 0) {
-        isRepo = false;
+        is_repo = false;
         return;
     }
     error = git_repository_open_ext(&repo, root.ptr, GIT_REPOSITORY_OPEN_NO_SEARCH, NULL);
     git_buf_free(&root);
     if (error == 0) {
-        isRepo = true;
+        is_repo = true;
         return;
     }
-    isRepo = false;
+    is_repo = false;
 }
