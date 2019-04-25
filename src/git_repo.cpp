@@ -83,12 +83,10 @@ void GitRepo::set_status_infos() {
     git_status_list *status;
     git_status_options statusopt;
     git_status_init_options(&statusopt, GIT_STATUS_OPTIONS_VERSION);
-    statusopt.flags = GIT_STATUS_OPT_EXCLUDE_SUBMODULES;
-    statusopt.flags |= GIT_STATUS_OPT_INCLUDE_UNTRACKED;
+
+    statusopt.flags = GIT_STATUS_OPT_INCLUDE_UNTRACKED;
     statusopt.flags |= GIT_STATUS_OPT_NO_REFRESH;
 
-    //GIT_STATUS_SHOW_INDEX_ONLY
-    //GIT_STATUS_SHOW_WORKDIR_ONLY
     statusopt.show  = GIT_STATUS_SHOW_INDEX_AND_WORKDIR;
 
     git_status_list_new(&status, repo, &statusopt);
